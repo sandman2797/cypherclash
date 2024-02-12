@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50;
+}
+.warpcast-link {
+  color: blue; /* Sets the text color to blue */
+  text-decoration: underline; /* Underlines the text */
+}
+.move-history-table-container {
+  max-height: 300px; /* Adjust the height as needed */
+  overflow-y: auto;
+}
