@@ -37,6 +37,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // For example, let's assume you receive an option in the body
         try {
             const gameId = req.query['id']
+            const moved = req.query['moved']
+            
+            if (moved && moved=="true") {
+                return res.status(400).send('Moved already');
+            }
             if (!gameId) {
                 return res.status(400).send('Missing game ID');
             }
@@ -70,13 +75,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const playerData:PlayerData | null = await getPlayerData(gameId as string, fid as unknown as string);
 
             let game: Game | null = await kv.hgetall(`game:${gameId}`);
-            let moveStatus = "Can't move";
+            let moveStatus = "Can't_move";
             const createdAt = game?.created_at;
             const timeCheck = await checkIf24HoursPassed(createdAt as unknown as string);
             if (playerData){
                 if (playerData.movesLeft == 0){
                     console.log("No moves left ");
-                    moveStatus = "No Moves Left!";
+                    moveStatus = "No_Moves_Left!";
                 }
                 else if (!timeCheck){
                     const movesLeft = playerData.movesLeft;
@@ -130,11 +135,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     } 
                 }
                 else {
-                    moveStatus = "Times Up!"
+                    moveStatus = "Times_Up!"
                 }
             }
             else {
-                moveStatus = 'Pls join a team first';
+                moveStatus = 'Join_A_Team';
                 console.log("player not found");
             }
 
@@ -155,7 +160,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           <meta property="og:image" content="${imageUrl}">
           <meta name="fc:frame" content="vNext">
           <meta name="fc:frame:image" content="${imageUrl}">
-          <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${game.id}">
+          <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${game.id}&moved=true">
           <meta name="fc:frame:button:1" content=${button1Text}>
         </head>
         <body>

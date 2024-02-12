@@ -282,15 +282,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             let button1Text = "Joined!";
             let button2Text = "Game Progress";
             if (joined == "full") {
-              button1Text = "Team Full!";
+              button1Text = "Team_Full!";
             } else if (joined == "joined") {
                 button1Text = "Joined!"
-                button2Text = "Team Chat"
+                button2Text = "Team_Chat"
             } else if (joined == "moves") {
-              button1Text = "Move Added"
+              button1Text = "Move_Added"
               button2Text = "Team Chat"
             } else if (joined == "done") {
-              button1Text = "Already Joined"
+              button1Text = "Already_Joined"
               button2Text = "Team Chat"
             }
             console.log(button1Text);
