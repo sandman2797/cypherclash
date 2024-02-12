@@ -51,11 +51,11 @@ export async function generateMetadata(
 
     const fcMetadata: Record<string, string> = {
         "fc:frame": "vNext",
-        "fc:frame:post_url": `${process.env['HOST']}/api/move?id=${id}`,
+        "fc:frame:post_url": `${process.env['HOST']}/api/move?id=${id}&moved=play`,
         "fc:frame:image": `${process.env['HOST']}/api/image?id=${id}&date=${Date.now()}`,
     };
     
-    ["Left","Right", "Up", "Down"].filter(o => o !== "").map((option, index) => {
+    ["Play"].filter(o => o !== "").map((option, index) => {
         fcMetadata[`fc:frame:button:${index + 1}`] = option;
     })
 

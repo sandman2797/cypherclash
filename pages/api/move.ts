@@ -38,10 +38,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const gameId = req.query['id']
             const moved = req.query['moved']
-            
-            if (moved && moved=="true") {
-                return res.status(400).send('Moved already');
-            }
+            let game: Game | null = await kv.hgetall(`game:${gameId}`);
+
+            if (moved){
+                if (moved == "play") {
+                    const imageUrl = `${process.env['HOST']}/api/image?id=${gameId}&date=${Date.now()}`;
+
+                    res.setHeader('Content-Type', 'text/html');
+                    res.status(200).send(`
+            <!DOCTYPE html>
+            <html>
+                <head>
+                <title>You Moved</title>
+                <meta property="og:title" content="Vote Recorded">
+                <meta property="og:image" content="${imageUrl}">
+                <meta name="fc:frame" content="vNext">
+                <meta name="fc:frame:image" content="${imageUrl}">
+                <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${gameId}&moved=false">
+                <meta name="fc:frame:button:1" content="Left">
+                <meta name="fc:frame:button:2" content="Right">
+                <meta name="fc:frame:button:3" content="Up">
+                <meta name="fc:frame:button:4" content="Down">
+                </head>
+                <body>
+                <p>${`Action taken` }</p>
+                </body>
+            </html>
+    `);
+                }
+            } 
             if (!gameId) {
                 return res.status(400).send('Missing game ID');
             }
@@ -74,7 +99,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.log(buttonId, fid);
             const playerData:PlayerData | null = await getPlayerData(gameId as string, fid as unknown as string);
 
-            let game: Game | null = await kv.hgetall(`game:${gameId}`);
             let moveStatus = "Can't_move";
             const createdAt = game?.created_at;
             const timeCheck = await checkIf24HoursPassed(createdAt as unknown as string);
@@ -160,7 +184,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           <meta property="og:image" content="${imageUrl}">
           <meta name="fc:frame" content="vNext">
           <meta name="fc:frame:image" content="${imageUrl}">
-          <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${game.id}&moved=true">
+          <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${game.id}&moved=play">
           <meta name="fc:frame:button:1" content=${button1Text}>
         </head>
         <body>
