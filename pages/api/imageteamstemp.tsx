@@ -60,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             whiteSpace: 'nowrap',
                             overflow: 'visible',
                         }}>
-                        <span style={{paddingRight: '25px',}}>{teamNames[index]}: </span>
+                        <span style={{paddingRight: '25px',}}>{teamNames[index]} </span>
                         </div>
                     ))
                 }

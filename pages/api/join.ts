@@ -183,7 +183,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   <meta property="og:image" content="${imageUrl}">
                   <meta name="fc:frame" content="vNext">
                   <meta name="fc:frame:image" content="${imageUrl}">
-                  <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/join?id=${gameId}&joined=true&date=${Date.now()}">
+                  <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/join?id=${gameId}&joined=false&date=${Date.now()}">
                   <meta name="fc:frame:button:1" content="${teamNames[0]}">
                   <meta name="fc:frame:button:2" content="${teamNames[1]}">
                   <meta name="fc:frame:button:3" content="${teamNames[2]}">
