@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const imageUrl = `${process.env['HOST']}/api/image?id=${gameId}&date=${Date.now()}`;
 
                     res.setHeader('Content-Type', 'text/html');
-                    res.status(200).send(`
+                    return res.status(200).send(`
             <!DOCTYPE html>
             <html>
                 <head>

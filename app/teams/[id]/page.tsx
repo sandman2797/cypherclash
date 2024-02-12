@@ -52,11 +52,11 @@ export async function generateMetadata(
 
     const fcMetadata: Record<string, string> = {
         "fc:frame": "vNext",
-        "fc:frame:post_url": `${process.env['HOST']}/api/join?id=${id}&joined=false`,
-        "fc:frame:image": `${process.env['HOST']}/api/imageteams?id=${id}&date=${Date.now()}&joined=false`,
+        "fc:frame:post_url": `${process.env['HOST']}/api/join?id=${id}&joined=join`,
+        "fc:frame:image": `${process.env['HOST']}/api/imageteamstemp?id=${id}&date=${Date.now()}&joined=false`,
     };
     
-    teamNames.filter(o => o !== "").map((option, index) => {
+    ["Join"].filter(o => o !== "").map((option, index) => {
         fcMetadata[`fc:frame:button:${index + 1}`] = option;
     })
 

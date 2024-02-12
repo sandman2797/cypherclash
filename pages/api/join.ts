@@ -158,11 +158,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           let joined = req.query['joined'];
           const team = req.query['team'];
           if (joined == "true") {
-            console.log("I'm inside hrere now");
-              console.log("I'm inside hrere now 12", team);
-
-              const gcLink = "";
-              return res.status(302).setHeader('Location', gcLink).send('Redirecting to game page');
+            console.log("I'm inside hrere now 12", team);
+            const gcLink = "";
+            return res.status(302).setHeader('Location', gcLink).send('Redirecting to game page');
           }
           
         let game: Game | null = await kv.hgetall(`game:${gameId}`);
@@ -170,6 +168,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
           if (!gameId) {
               return res.status(400).send('Missing game ID');
+          }
+          if (joined == "join"){
+            const imageUrl = `${process.env['HOST']}/api/imageteams?id=${gameId}&date=${Date.now()}`;
+
+            // Return an HTML response
+            res.setHeader('Content-Type', 'text/html');
+            return res.status(200).send(`
+              <!DOCTYPE html>
+              <html>
+                <head>
+                  <title>Join teams</title>
+                  <meta property="og:title" content="Joined Team">
+                  <meta property="og:image" content="${imageUrl}">
+                  <meta name="fc:frame" content="vNext">
+                  <meta name="fc:frame:image" content="${imageUrl}">
+                  <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/join?id=${gameId}&joined=true&date=${Date.now()}">
+                  <meta name="fc:frame:button:1" content="${teamNames[0]}">
+                  <meta name="fc:frame:button:2" content="${teamNames[1]}">
+                  <meta name="fc:frame:button:3" content="${teamNames[2]}">
+                  <meta name="fc:frame:button:4" content="${teamNames[3]}">
+                </head>
+                <body>
+                  <p>${ true || false ? `You have already joined XYA` : `Your vote for has been recorded for fid.` }</p>
+                </body>
+              </html>
+            `);
           }
 
           let validatedMessage : Message | undefined = undefined;
