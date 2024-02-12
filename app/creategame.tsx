@@ -2,7 +2,7 @@
 
 import clsx from "clsx";
 import {useOptimistic, useRef, useState, useTransition} from "react";
-import {redirectToPolls, savePoll, votePoll, saveGame, moveGame} from "./actions";
+import {redirectToPolls, savePoll, votePoll, saveGame} from "./actions";
 import { v4 as uuidv4 } from "uuid";
 import {Poll, Game} from "./types";
 import {useRouter, useSearchParams} from "next/navigation";
@@ -187,12 +187,7 @@ export function GameVoteForm({game, viewResults}: { game: Game, viewResults?: bo
       <div className="max-w-sm rounded overflow-hidden shadow-lg p-4 m-4">
           <div className="font-bold text-xl mb-2">{game.title}</div>
               <GameStatus game={game}/>    
-              <button 
-                  onClick={() => moveGame(game, 1)} 
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                  Move
-              </button>
+
       </div>
 );
   };
@@ -227,12 +222,7 @@ export function TeamVoteForm({game, viewResults}: { game: Game, viewResults?: bo
       <div className="max-w-sm rounded overflow-hidden shadow-lg p-4 m-4">
           <div className="font-bold text-xl mb-2">{game.title}</div>
               <TeamStatus game={game}/>    
-              <button 
-                  onClick={() => moveGame(game, 1)} 
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                  Sup
-              </button>
+
       </div>
 );
   }

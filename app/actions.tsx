@@ -51,11 +51,3 @@ export async function saveGame(game: Game, formData: FormData) {
   revalidatePath("/games");
   redirect(`/games/${game.id}`);
 }
-
-export async function moveGame(game: Game, optionIndex: number) {
-  console.log(game.id);
-  await kv.hincrby(`game:${game.id}`, `positionX`, 10);
-
-  revalidatePath(`/games/${game.id}`);
-  redirect(`/games/${game.id}?results=true`);
-}
