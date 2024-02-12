@@ -40,8 +40,11 @@ async function getPlayerData(gameId: String, fid: String): Promise<PlayerData | 
     return await kv.hgetall(playerKey);
 }
 
-function formatTimeLeft(timeLeft: number) {
+function formatTimeLeft(timeLeft: number, creationStatus: boolean) {
     // Ensure timeLeft is positive; if it's past the deadline, just return "Time's up!"
+    if (creationStatus) {
+        return "Yet to start";
+    }
     if (timeLeft <= 0) {
       return "Time's up!";
     }
@@ -115,7 +118,7 @@ export async function MoveHistoryTable({game}:{game: Game}) {
     const twentyFourHoursInMs = 24 * 60 * 60 * 1000;
     const createdAt = Number(game.created_at);
     const timeLeft = createdAt + twentyFourHoursInMs - timeNow;
-    const timeLeftFormatted = formatTimeLeft(timeLeft);
+    const timeLeftFormatted = formatTimeLeft(timeLeft, createdAt == 0);
     return (
         <>
                     {/* Move History */}
@@ -129,7 +132,7 @@ export async function MoveHistoryTable({game}:{game: Game}) {
 
                     <table className="border-collapse border border-gray-500">
                         <thead>
-                            <tr>
+                            <tr key="1232">
                                 <th className="border border-gray-400 px-4 py-2 text-gray-800">Name</th>
                                 <th className="border border-gray-400 px-4 py-2 text-gray-800">Team</th>
                                 <th className="border border-gray-400 px-4 py-2 text-gray-800">Direction</th>
