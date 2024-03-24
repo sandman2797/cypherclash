@@ -56,11 +56,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const fid = validatedMessage?.data?.fid || 0;
             var playerData:PlayerData | null = await getPlayerData(gameId as string, fid as unknown as string);
             
+            console.log(nftwall);
             if (nftwall == "O"){
-
+                console.log("i'm side hte NFT wallet if");
                 const imageUrl = "https://assets.airstack.xyz/image/nft/8453/lfzr6AX00azA5MlwbC1mecp2ybeTtG8AcJxFvbPZw3sCFIKCcMR6Fic4WsktueECIo+m5YXQSjUiTSi3RwHbXQ==/medium.png"
-
-
                 res.setHeader('Content-Type', 'text/html');
                 res.status(200).send(`
                         <!DOCTYPE html>
@@ -81,7 +80,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             </body>
                         </html>
                         `);
-                }
+            }
 
             if (!playerData) {
                 const fData = await fetchFData(fid);
@@ -103,8 +102,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
                     console.log("I'm insdiemove");
                     let strideMul = 1;
-                    const horizontalStride = 36;
-                    const verticalStride = 18;
+                    const horizontalStride = 60;
+                    const verticalStride = 30;
         
                     // const fid = 438; // test data
                     // const buttonId = 1; // test data
