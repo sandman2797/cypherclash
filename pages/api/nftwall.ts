@@ -56,7 +56,6 @@ export async function fetchNFTData(fid:number) {
         }
         nftList.push(nft);
     }
-    console.log(nftList);
 
     return nftList;
 }
@@ -71,6 +70,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const viewFID = req.query['fid'];
           const rawIndex = req.query['index'];
           const index = rawIndex as unknown as number;
+          console.log("index is ", index);
           const nftList:NftList[] | undefined = await fetchNFTData(viewFID as unknown as number);
 
           let validatedMessage : Message | undefined = undefined;
