@@ -81,7 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     // const fid = 438; // test data
                     // const buttonId = 1; // test data
         
-                    console.log(buttonId, fid);
+                    console.log(buttonId, fid, prevPositionX, prevPositionY);
                     if (fid == 1452339){
                         let multi = kv.multi();
                         multi.hset(`game:${gameId}`, {'positionX': 28});
@@ -91,6 +91,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const createdAt = game?.created_at;
                     const timeCheck = await checkIf24HoursPassed(createdAt as unknown as string);
                     if (playerData){
+                        console.log("moveing");
                         if (buttonId == 1) {
                             if ( prevPositionX - horizontalStride*strideMul > 0 ){
                                 let multi = kv.multi();
