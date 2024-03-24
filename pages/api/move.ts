@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {Poll, Game, PlayerData} from "@/app/types";
 import { getPlayerData, updatePlayerMoves, addPlayer, fetchFData } from './join';
+import { fetchNFTData } from './nftwall';
 import {kv} from "@vercel/kv";
 import {getSSLHubRpcClient, Message} from "@farcaster/hub-nodejs";
 
@@ -57,6 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.log(nftwall);
             if (nftwall == "O"){
                 console.log("i'm side hte NFT wallet if");
+                const nftList = await fetchNFTData(fid);
                 const imageUrl = "https://assets.airstack.xyz/image/nft/8453/lfzr6AX00azA5MlwbC1mecp2ybeTtG8AcJxFvbPZw3sCFIKCcMR6Fic4WsktueECIo+m5YXQSjUiTSi3RwHbXQ==/medium.png"
                 res.setHeader('Content-Type', 'text/html');
                 return res.status(200).send(`

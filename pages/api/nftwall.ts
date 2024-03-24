@@ -56,6 +56,7 @@ export async function fetchNFTData(fid:number) {
         }
         nftList.push(nft);
     }
+    console.log(nftList);
 
     return nftList;
 }
@@ -118,7 +119,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 </html>
             `);
           }
-          var imageUrl = "null";
+          var imageUrl = "https://assets.airstack.xyz/image/nft/8453/lfzr6AX00azA5MlwbC1mecp2ybeTtG8AcJxFvbPZw3sCFIKCcMR6Fic4WsktueECIo+m5YXQSjUiTSi3RwHbXQ==/medium.png";
           console.log(displayIndex);
           nftList.forEach((item, n) => {
             if (n == displayIndex) {
