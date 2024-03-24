@@ -96,16 +96,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             if ( prevPositionX - horizontalStride*strideMul > 0 ){
                                 let multi = kv.multi();
                                 multi.hincrby(`player:${fid}`, `positionX`, -1*horizontalStride*strideMul);
-                                multi.hset(`game:${gameId}`, {'lastDirection': 'left'});
+                                multi.hset(`player:${fid}`, {'lastDirection': 'left'});
                                 await multi.exec();
                                 prevPositionX += -1*horizontalStride*strideMul
                             }
                         }
                         else if (buttonId == 2) {
-                            if ( prevPositionX + horizontalStride*strideMul < 558 ){
+                            if ( prevPositionX + horizontalStride*strideMul < 733 ){
                                 let multi = kv.multi();
                                 multi.hincrby(`player:${fid}`, `positionX`, 1*horizontalStride*strideMul);
-                                multi.hset(`game:${gameId}`, {'lastDirection': 'right'});
+                                multi.hset(`player:${fid}`, {'lastDirection': 'right'});
                                 await multi.exec();
                                 prevPositionX += 1*horizontalStride*strideMul
                             }
@@ -115,16 +115,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             if ( prevPositionY - verticalStride*strideMul > 0 ){
                                 let multi = kv.multi();
                                 multi.hincrby(`player:${fid}`, `positionY`, -1*verticalStride*strideMul);
-                                multi.hset(`game:${gameId}`, {'lastDirection': 'up'});
+                                multi.hset(`player:${fid}`, {'lastDirection': 'up'});
                                 await multi.exec();
                                 prevPositionX += -1*verticalStride*strideMul
                             }
                         }
                         else if (buttonId == 4) {
-                            if ( prevPositionY + verticalStride*strideMul < 272 ){
+                            if ( prevPositionY + verticalStride*strideMul < 352 ){
                                 let multi = kv.multi();
                                 multi.hincrby(`player:${fid}`, `positionY`, 1*verticalStride*strideMul);
-                                multi.hset(`game:${gameId}`, {'lastDirection': 'down'});
+                                multi.hset(`player:${fid}`, {'lastDirection': 'down'});
                                 await multi.exec();
                                 prevPositionX += 1*verticalStride*strideMul
                             }
@@ -143,7 +143,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
         
 
-                    const imageUrl = `${process.env['HOST']}/api/image?id=${gameId}&fid=${fid}&posX=${prevPositionX}&posY=${prevPositionY}&date=${Date.now()}`;
+                    const imageUrl = `${process.env['HOST']}/api/image?id=${gameId}&fid=${fid}&date=${Date.now()}`;
 
                     res.setHeader('Content-Type', 'text/html');
                     return res.status(200).send(`
@@ -170,7 +170,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 else if (moved == "start") {
                     console.log("first time I'm moving")
                     
-                    const imageUrl = `${process.env['HOST']}/api/image?id=${gameId}&fid=${fid}&posX=${prevPositionX}&posY=${prevPositionY}&date=${Date.now()}`;
+                    const imageUrl = `${process.env['HOST']}/api/image?id=${gameId}&fid=${fid}&date=${Date.now()}`;
 
                     res.setHeader('Content-Type', 'text/html');
                     return res.status(200).send(`
@@ -199,7 +199,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (!game) {
                 return res.status(400).send('Missing game ID');
             }
-            const imageUrl = `${process.env['HOST']}/api/image?id=${game.id}&date=${Date.now()}${ fid > 0 ? `&fid=${fid}` : '' }`;
+            const imageUrl = `${process.env['HOST']}/api/image?id=${game.id}&fid=${fid}&date=${Date.now()}${ fid > 0 ? `&fid=${fid}` : '' }`;
             const button1Text = moveStatus;
             console.log(button1Text);
             // Return an HTML response

@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import sharp from 'sharp';
-import {Poll, Game} from "@/app/types";
+import {Poll, Game, PlayerData} from "@/app/types";
 import {kv} from "@vercel/kv";
 import satori from "satori";
 import { join } from 'path';
 import * as fs from "fs";
+import { getPlayerData } from './join';
+
 
 const fontPath = join(process.cwd(), 'Roboto-Regular.ttf')
 let fontData = fs.readFileSync(fontPath)
@@ -13,15 +15,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         const gameId = req.query['id'];
         const fid = req.query['fid'];
-        const posX = req.query['posX'];
-        const posY = req.query['posY'];
-        const date = req.query['date'];
         // const fid = parseInt(req.query['fid']?.toString() || '')
         if (!gameId) {
             return res.status(400).send('Missing poll ID');
         }
 
         let game: Game | null = await kv.hgetall(`game:${gameId}`);
+        var playerData:PlayerData | null = await getPlayerData(gameId as string, fid as unknown as string);
 
 
         if (!game) {
@@ -35,9 +35,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // }
 
 
-        const characterX = posX; // 0 - 540
-        const characterY = posY; // 0 - 272
-        const lastDirection = game.lastDirection;
+        const characterX = playerData?.positionX; // 0 - 540
+        const characterY = playerData?.positionY; // 0 - 272
+        const lastDirection = playerData?.lastDirection;
         let charPath = 'api/frontside'
         if (lastDirection == 'up' || lastDirection == 'down'){
             charPath = 'api/frontside'
