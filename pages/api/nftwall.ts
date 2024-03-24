@@ -140,7 +140,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   <meta property="og:image" content="${imageUrl}">
                   <meta name="fc:frame" content="vNext">
                   <meta name="fc:frame:image" content="${imageUrl}">
-                  <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/nftwall?fid=${fid}&index=${displayIndex}&date=${Date.now()}">
+                  <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/nftwall?fid=${viewFID}&index=${displayIndex}&date=${Date.now()}">
                   <meta name="fc:frame:button:1" content="<">
                   <meta name="fc:frame:button:2" content=">">
                   <meta name="fc:frame:button:3" content="Back">
