@@ -87,8 +87,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const buttonId = validatedMessage?.data?.frameActionBody?.buttonIndex || 0;
           const fid = validatedMessage?.data?.fid || 0;
           var displayIndex:number = 0;
-          if (buttonId == 1 && index > 0) {
-            displayIndex = Number(index)-1;
+          if (buttonId == 1) {
+            if (index > 0){
+                displayIndex = Number(index)-1;
+            }
           }
           else if (buttonId == 2) {
             displayIndex = Number(index)+1;
