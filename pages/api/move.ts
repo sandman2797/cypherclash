@@ -194,7 +194,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             </html>
     `);
                 }
-            } 
+            }
             
             if (!game) {
                 return res.status(400).send('Missing game ID');
