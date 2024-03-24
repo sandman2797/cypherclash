@@ -21,10 +21,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         let game: Game | null = await kv.hgetall(`game:${gameId}`);
-        var playerData:PlayerData | null = await getPlayerData(gameId as string, fid as unknown as string);
+        var playerData:PlayerData | null = await getPlayerData(fid as unknown as string);
         if (!playerData) {
             const nfid = 42690;
-            playerData = await getPlayerData(gameId as string, nfid as unknown as string);
+            playerData = await getPlayerData(nfid as unknown as string);
         }
 
         if (!game) {

@@ -60,7 +60,7 @@ export async function addPlayer(fid: number, name: string) {
     // Add player fid to the team set
   }
   
-export async function getPlayerData(gameId: string, fid: string): Promise<PlayerData | null> {
+export async function getPlayerData(fid: string): Promise<PlayerData | null> {
     const playerKey = `player:${fid}`;
     return await kv.hgetall(playerKey);
 }
@@ -72,7 +72,7 @@ export async function getTeamMembers(gameId: String, teamId: String): Promise<Pl
   fids = fids.sort((a, b) => Number(a) - Number(b));
   
   // Map each fid to a promise of PlayerData or null
-  let playerPromises = fids.map(fid => getPlayerData(gameId as string, fid));
+  let playerPromises = fids.map(fid => getPlayerData(fid));
 
   // Await all promises to resolve, keeping them in the original order
   const resolvedPlayers = await Promise.all(playerPromises);
@@ -91,7 +91,7 @@ export async function getTeamMembers(gameId: String, teamId: String): Promise<Pl
       const teamKey = `team:${gameId}:${teamId}`;
       const fids = await kv.smembers(teamKey);
       for (const fid of fids) {
-        const playerData:PlayerData | null = await getPlayerData(gameId, fid);
+        const playerData:PlayerData | null = await getPlayerData(fid);
         if (playerData != null){
             return true;
           
@@ -111,7 +111,7 @@ export async function getTeamMembers(gameId: String, teamId: String): Promise<Pl
     await kv.hset(playerKey, updateData);
   
     // If you need to return the updated data
-    return await getPlayerData(gameId, fid);
+    return await getPlayerData(fid);
   }
   
 
@@ -242,7 +242,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           console.log("fid is", fid);
           console.log("count", teamCount);
 
-          const playerData = await getPlayerData(gameId as string, fid as unknown as string);
+          const playerData = await getPlayerData(fid as unknown as string);
           if (buttonId > 0 && buttonId < 5 && !playerData && joined != "full") {
 
               const fData = await fetchFData(fid);
@@ -274,7 +274,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               const fData = await fetchFData(fid);
               const name = fData['name'];
               let nftId = fData['nft'];
-              const playerData:PlayerData | null = await getPlayerData(gameId as string, fid as unknown as string);
+              const playerData:PlayerData | null = await getPlayerData(fid as unknown as string);
               // movesLeft = playerData?.movesLeft || -1;
               joined = "done";
               console.log("Player exists");

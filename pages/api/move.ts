@@ -36,10 +36,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Process the vote
         // For example, let's assume you receive an option in the body
         try {
-            const gameId = req.query['id']
             const moved = req.query['moved']
             const nftwall = req.query['nftwall']
-            let game: Game | null = await kv.hgetall(`game:${gameId}`);
 
             let validatedMessage : Message | undefined = undefined;
             try {
@@ -54,14 +52,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const buttonId = validatedMessage?.data?.frameActionBody?.buttonIndex || 0;
             const fid = validatedMessage?.data?.fid || 0;
-            var playerData:PlayerData | null = await getPlayerData(gameId as string, fid as unknown as string);
+            var playerData:PlayerData | null = await getPlayerData(fid as unknown as string);
             
             console.log(nftwall);
             if (nftwall == "O"){
                 console.log("i'm side hte NFT wallet if");
                 const imageUrl = "https://assets.airstack.xyz/image/nft/8453/lfzr6AX00azA5MlwbC1mecp2ybeTtG8AcJxFvbPZw3sCFIKCcMR6Fic4WsktueECIo+m5YXQSjUiTSi3RwHbXQ==/medium.png"
                 res.setHeader('Content-Type', 'text/html');
-                res.status(200).send(`
+                return res.status(200).send(`
                         <!DOCTYPE html>
                         <html>
                             <head>
@@ -70,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             <meta property="og:image" content="${imageUrl}">
                             <meta name="fc:frame" content="vNext">
                             <meta name="fc:frame:image" content="${imageUrl}">
-                            <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/nftwall?id=${fid}">
+                            <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/nftwall?fid=${fid}">
                             <meta name="fc:frame:button:1" content="<">
                             <meta name="fc:frame:button:2" content=">">
                             <meta name="fc:frame:button:3" content="Back">
@@ -86,7 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const fData = await fetchFData(fid);
                 const name = fData['name'];
                 addPlayer(fid, name);
-                playerData = await getPlayerData(gameId as string, fid as unknown as string);
+                playerData = await getPlayerData(fid as unknown as string);
             }
             const prevPositionXValue = playerData?.positionX;
             var prevPositionX = Number(prevPositionXValue);
@@ -97,9 +95,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (moved){
                 if (moved == "play") {
 
-                    if (!gameId) {
-                        return res.status(400).send('Missing game ID');
-                    }
                     console.log("I'm insdiemove");
                     let strideMul = 1;
                     const horizontalStride = 60;
@@ -109,14 +104,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     // const buttonId = 1; // test data
         
                     console.log(buttonId, fid, prevPositionX, prevPositionY);
-                    if (fid == 1452339){
-                        let multi = kv.multi();
-                        multi.hset(`game:${gameId}`, {'positionX': 28});
-                        multi.hset(`game:${gameId}`, {'positionY': 64});
-                        await multi.exec();
-                    }
-                    const createdAt = game?.created_at;
-                    const timeCheck = await checkIf24HoursPassed(createdAt as unknown as string);
                     var upButton = "Up";
                     if (playerData){
                         console.log("moveing");
@@ -163,9 +150,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             upButton = "O";
                             kv.hset(`player:${fid}`, {'lastDirection': 'up'});
                         }
-                        if (moveStatus == "Moved!" && game?.created_at == 0) {
-                            kv.hset(`game:${gameId}`, {'created_at': Date.now()});
-                        } 
                     
                         else {
                             moveStatus = "Times_Up!"
@@ -177,7 +161,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
         
 
-                    const imageUrl = `${process.env['HOST']}/api/image?id=${gameId}&fid=${fid}&date=${Date.now()}`;
+                    const imageUrl = `${process.env['HOST']}/api/image?fid=${fid}&date=${Date.now()}`;
 
                     res.setHeader('Content-Type', 'text/html');
                     return res.status(200).send(`
@@ -189,7 +173,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 <meta property="og:image" content="${imageUrl}">
                 <meta name="fc:frame" content="vNext">
                 <meta name="fc:frame:image" content="${imageUrl}">
-                <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${gameId}&moved=play&nftwall=${upButton}">
+                <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?moved=play&nftwall=${upButton}">
                 <meta name="fc:frame:button:1" content="Left">
                 <meta name="fc:frame:button:2" content="Right">
                 <meta name="fc:frame:button:3" content=${upButton}>
@@ -204,7 +188,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 else if (moved == "start") {
                     console.log("first time I'm moving")
                     
-                    const imageUrl = `${process.env['HOST']}/api/image?id=${gameId}&fid=${fid}&date=${Date.now()}`;
+                    const imageUrl = `${process.env['HOST']}/api/image?fid=${fid}&date=${Date.now()}`;
 
                     res.setHeader('Content-Type', 'text/html');
                     return res.status(200).send(`
@@ -216,7 +200,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 <meta property="og:image" content="${imageUrl}">
                 <meta name="fc:frame" content="vNext">
                 <meta name="fc:frame:image" content="${imageUrl}">
-                <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${gameId}&moved=play">
+                <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?moved=play">
                 <meta name="fc:frame:button:1" content="Left">
                 <meta name="fc:frame:button:2" content="Right">
                 <meta name="fc:frame:button:3" content="Up">
@@ -230,10 +214,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             }
             
-            if (!game) {
-                return res.status(400).send('Missing game ID');
-            }
-            const imageUrl = `${process.env['HOST']}/api/image?id=${game.id}&fid=${fid}&date=${Date.now()}${ fid > 0 ? `&fid=${fid}` : '' }`;
+            const imageUrl = `${process.env['HOST']}/api/image?fid=${fid}&date=${Date.now()}${ fid > 0 ? `&fid=${fid}` : '' }`;
             const button1Text = moveStatus;
             console.log(button1Text);
             // Return an HTML response
@@ -247,7 +228,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           <meta property="og:image" content="${imageUrl}">
           <meta name="fc:frame" content="vNext">
           <meta name="fc:frame:image" content="${imageUrl}">
-          <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${game.id}&moved=play">
+          <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?moved=play">
           <meta name="fc:frame:button:1" content=${button1Text}>
         </head>
         <body>

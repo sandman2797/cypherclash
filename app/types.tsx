@@ -34,3 +34,4 @@ export type PlayerData = {
   positionY: number;
   lastDirection: string;
 };
+
