@@ -61,9 +61,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 addPlayer(fid, name);
                 playerData = await getPlayerData(gameId as string, fid as unknown as string);
             }
-            const prevPositionXValue = await kv.hget(`game:${gameId}`, `positionX`);
+            const prevPositionXValue = playerData?.positionX;
             const prevPositionX = Number(prevPositionXValue);
-            const prevPositionYValue = await kv.hget(`game:${gameId}`, `positionY`);
+            const prevPositionYValue = playerData?.positionY;
             const prevPositionY = Number(prevPositionYValue);
 
             let moveStatus = "Can't_move";
@@ -159,6 +159,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     `);
                 }
                 else if (moved == "start") {
+                    console.log("first time I'm moving")
                     
                     const imageUrl = `${process.env['HOST']}/api/image?id=${gameId}&fid=${fid}&posX=${prevPositionX}&posY=${prevPositionY}&date=${Date.now()}`;
 
