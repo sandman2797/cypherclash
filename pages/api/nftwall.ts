@@ -22,7 +22,7 @@ export async function fetchNFTData(fid:number) {
             isDefault
             profileName
           }
-          tokenBalances(input: {limit: 20, blockchain: base, order: {lastUpdatedTimestamp: ASC}, filter: {tokenAddress: {_in: ["0x73682a7f47cb707c52cb38192dbb9266d3220315","0x12f885808f616b8056a37be00fdd029e1c59ab08","0x670971dcb8e1a510253511427593007e074954b7"]}}}) {
+          tokenBalances(input: {limit: 20, blockchain: base, order: {lastUpdatedTimestamp: ASC}}) {
             tokenNfts {
               token {
                 name
@@ -68,7 +68,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // For example, let's assume you receive an option in the body
         try {
           const viewFID = req.query['fid'];
-          const index = req.query['index'] as unknown as number;
+          const rawIndex = req.query['index'];
+          const index = rawIndex as unknown as number;
           const nftList:NftList[] | undefined = await fetchNFTData(viewFID as unknown as number);
 
           let validatedMessage : Message | undefined = undefined;
@@ -84,12 +85,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
           const buttonId = validatedMessage?.data?.frameActionBody?.buttonIndex || 0;
           const fid = validatedMessage?.data?.fid || 0;
-          var displayIndex = 0;
+          var displayIndex:number = 0;
           if (buttonId == 1 && index > 0) {
-            displayIndex = index-1;
+            displayIndex = Number(index)-1;
           }
           else if (buttonId == 2) {
-            displayIndex = index+1;
+            displayIndex = Number(index)+1;
           }
           else if (buttonId == 3) {
                     
@@ -122,6 +123,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           nftList.forEach((item, n) => {
             if (n == displayIndex) {
                 imageUrl = item.image;
+                console.log(item.name);
             };
           });
           console.log(imageUrl);
