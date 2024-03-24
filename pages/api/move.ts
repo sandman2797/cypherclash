@@ -38,6 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const gameId = req.query['id']
             const moved = req.query['moved']
+            const nftwall = req.query['nftwall']
             let game: Game | null = await kv.hgetall(`game:${gameId}`);
 
             let validatedMessage : Message | undefined = undefined;
@@ -55,6 +56,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const fid = validatedMessage?.data?.fid || 0;
             var playerData:PlayerData | null = await getPlayerData(gameId as string, fid as unknown as string);
             
+            if (nftwall == "O"){
+
+                const imageUrl = "https://assets.airstack.xyz/image/nft/8453/lfzr6AX00azA5MlwbC1mecp2ybeTtG8AcJxFvbPZw3sCFIKCcMR6Fic4WsktueECIo+m5YXQSjUiTSi3RwHbXQ==/medium.png"
+
+
+                res.setHeader('Content-Type', 'text/html');
+                res.status(200).send(`
+                        <!DOCTYPE html>
+                        <html>
+                            <head>
+                            <title>You Moved</title>
+                            <meta property="og:title" content="Vote Recorded">
+                            <meta property="og:image" content="${imageUrl}">
+                            <meta name="fc:frame" content="vNext">
+                            <meta name="fc:frame:image" content="${imageUrl}">
+                            <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/nftwall?id=${fid}">
+                            <meta name="fc:frame:button:1" content="<">
+                            <meta name="fc:frame:button:2" content=">">
+                            <meta name="fc:frame:button:3" content="Back">
+                            </head>
+                            <body>
+                            <p>${`Action taken` }</p>
+                            </body>
+                        </html>
+                        `);
+                }
+
             if (!playerData) {
                 const fData = await fetchFData(fid);
                 const name = fData['name'];
@@ -90,6 +118,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
                     const createdAt = game?.created_at;
                     const timeCheck = await checkIf24HoursPassed(createdAt as unknown as string);
+                    var upButton = "Up";
                     if (playerData){
                         console.log("moveing");
                         if (buttonId == 1) {
@@ -111,13 +140,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             }
                         }
                         else if (buttonId == 3) {
-                            console.log("inside UP");
-                            if ( prevPositionY - verticalStride*strideMul > 0 ){
+                            if ( prevPositionY - verticalStride*strideMul > 75 ){
                                 let multi = kv.multi();
                                 multi.hincrby(`player:${fid}`, `positionY`, -1*verticalStride*strideMul);
                                 multi.hset(`player:${fid}`, {'lastDirection': 'up'});
                                 await multi.exec();
                                 prevPositionX += -1*verticalStride*strideMul
+                            }
+                            else if ( prevPositionX > 420 && prevPositionX < 620 ) {
+                                moveStatus = "NFT Wall";
                             }
                         }
                         else if (buttonId == 4) {
@@ -128,6 +159,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 await multi.exec();
                                 prevPositionX += 1*verticalStride*strideMul
                             }
+                        }
+                        if (moveStatus == "NFT Wall") {
+                            upButton = "O";
                         }
                         if (moveStatus == "Moved!" && game?.created_at == 0) {
                             kv.hset(`game:${gameId}`, {'created_at': Date.now()});
@@ -155,10 +189,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 <meta property="og:image" content="${imageUrl}">
                 <meta name="fc:frame" content="vNext">
                 <meta name="fc:frame:image" content="${imageUrl}">
-                <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${gameId}&moved=play">
+                <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${gameId}&moved=play&nftwall=${upButton}}">
                 <meta name="fc:frame:button:1" content="Left">
                 <meta name="fc:frame:button:2" content="Right">
-                <meta name="fc:frame:button:3" content="Up">
+                <meta name="fc:frame:button:3" content=${upButton}>
                 <meta name="fc:frame:button:4" content="Down">
                 </head>
                 <body>
