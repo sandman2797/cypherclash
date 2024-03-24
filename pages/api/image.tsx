@@ -38,10 +38,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // }
 
 
-        // const characterX = playerData?.positionX; // 0 - 540
-        // const characterY = playerData?.positionY; // 0 - 272
-        const characterX = 620; // 0 - 540
-        const characterY = 75; // 0 - 272
+        const characterX = playerData?.positionX; // 0 - 540
+        const characterY = playerData?.positionY; // 0 - 272
+        // const characterX = 620; // 0 - 540
+        // const characterY = 75; // 0 - 272
         const lastDirection = playerData?.lastDirection;
         let charPath = 'api/frontside'
         if (lastDirection == 'up' || lastDirection == 'down'){
