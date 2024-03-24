@@ -33,4 +33,6 @@ export type PlayerData = {
   team: string;
   nft: number;
   movesLeft: number;
+  positionX: number;
+  positionY: number;
 };

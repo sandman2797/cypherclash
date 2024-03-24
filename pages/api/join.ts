@@ -39,24 +39,24 @@ async function fetchFData(fid:number) {
     return r;
     }
 
-async function addPlayer(gameId: string, fid: number, name: string, teamId: string, nftId: number, movesLeft: number) {
-    const playerKey = `player:${gameId}:${fid}`;
-    const teamKey = `team:${gameId}:${teamId}`;
+async function addPlayer(fid: number, name: string) {
+    const playerKey = `player:${fid}`;
   
     // Player data
+    const posX = 280;
+    const posY = 118;
+
     const playerData: PlayerData = {
         fid: fid,
         name: name,
-      team: teamId,
-      nft: nftId,
-      movesLeft: movesLeft
+        positionX: posX,
+        positionY: posY,
     };
   
     // Store player data in a hash
     await kv.hset(playerKey, playerData);
   
     // Add player fid to the team set
-    await kv.sadd(teamKey, fid.toString());
   }
   
 export async function getPlayerData(gameId: string, fid: string): Promise<PlayerData | null> {
@@ -92,10 +92,8 @@ export async function getTeamMembers(gameId: String, teamId: String): Promise<Pl
       for (const fid of fids) {
         const playerData:PlayerData | null = await getPlayerData(gameId, fid);
         if (playerData != null){
-          if ( Number(playerData.nft) == nftId){
-            console.log("real time",playerData.nft, nftId);
             return true;
-          }
+          
         }
       }
 
@@ -264,7 +262,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 joined = "full";
               }
               else {
-                addPlayer(gameId as string, fid, name, teamNames[buttonId-1], nftId, movesLeft);
+                addPlayer(fid, name);
                 joined = "joined";
               }
               teamChosen = teamNames[buttonId-1];
@@ -276,11 +274,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               const name = fData['name'];
               let nftId = fData['nft'];
               const playerData:PlayerData | null = await getPlayerData(gameId as string, fid as unknown as string);
-              movesLeft = playerData?.movesLeft || -1;
+              // movesLeft = playerData?.movesLeft || -1;
               joined = "done";
               console.log("Player exists");
 
-              teamChosen = playerData?.team || "";
+              // teamChosen = playerData?.team || "";
               console.log("team chosen ", teamChosen);
               if (nftId != -1) {
                 console.log("Has NFT!");

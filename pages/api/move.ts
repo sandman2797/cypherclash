@@ -98,66 +98,49 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             console.log(buttonId, fid);
             const playerData:PlayerData | null = await getPlayerData(gameId as string, fid as unknown as string);
-
+            if (fid == 14539){
+                let multi = kv.multi();
+                multi.hset(`game:${gameId}`, {'positionX': 28});
+                multi.hset(`game:${gameId}`, {'positionY': 64});
+                await multi.exec();
+            }
             let moveStatus = "Can't_move";
             const createdAt = game?.created_at;
             const timeCheck = await checkIf24HoursPassed(createdAt as unknown as string);
             if (playerData){
-                if (playerData.movesLeft == 0){
-                    console.log("No moves left ");
-                    moveStatus = "No_Moves_Left!";
+                if (buttonId == 1) {
+                    if ( prevPositionX - horizontalStride*strideMul > 0 ){
+                        let multi = kv.multi();
+                        multi.hincrby(`player:${fid}`, `positionX`, -1*horizontalStride*strideMul);
+                        await multi.exec();
+                        moveStatus = "Moved!"
+                    }
                 }
-                else if (!timeCheck){
-                    const movesLeft = playerData.movesLeft;
-                    const nftId = playerData.nft;
-                    if (buttonId == 1) {
-                        if ( prevPositionX - horizontalStride*strideMul > 0 ){
-                            let multi = kv.multi();
-                            multi.hincrby(`game:${gameId}`, `positionX`, -1*horizontalStride*strideMul);
-                            multi.rpush(`moves:${gameId}`, {[fid]:'left'});
-                            multi.hset(`game:${gameId}`, {'lastDirection': 'left'});
-                            await multi.exec();
-                            updatePlayerMoves(gameId as string, fid as unknown as string, movesLeft-1, nftId);
-                            moveStatus = "Moved!"
-                        }
+                else if (buttonId == 2) {
+                    if ( prevPositionX + horizontalStride*strideMul < 558 ){
+                        let multi = kv.multi();
+                        multi.hincrby(`player:${fid}`, `positionX`, 1*horizontalStride*strideMul);
+                        moveStatus = "Moved!"
                     }
-                    else if (buttonId == 2) {
-                        if ( prevPositionX + horizontalStride*strideMul < 558 ){
-                            let multi = kv.multi();
-                            multi.hincrby(`game:${gameId}`, `positionX`, 1*horizontalStride*strideMul);
-                            multi.rpush(`moves:${gameId}`, {[fid]:'right'});
-                            multi.hset(`game:${gameId}`, {'lastDirection': 'right'});
-                            await multi.exec();
-                            updatePlayerMoves(gameId as string, fid as unknown as string, movesLeft-1, nftId);
-                            moveStatus = "Moved!"
-                        }
-                    }
-                    else if (buttonId == 3) {
-                        if ( prevPositionX - verticalStride*strideMul > 0 ){
-                            let multi = kv.multi();
-                            multi.hincrby(`game:${gameId}`, `positionY`, -1*verticalStride*strideMul);
-                            multi.rpush(`moves:${gameId}`, {[fid]:'up'});
-                            multi.hset(`game:${gameId}`, {'lastDirection': 'up'});
-                            await multi.exec();
-                            updatePlayerMoves(gameId as string, fid as unknown as string, movesLeft-1, nftId);
-                            moveStatus = "Moved!"
-                        }
-                    }
-                    else if (buttonId == 4) {
-                        if ( prevPositionX + verticalStride*strideMul < 272 ){
-                            let multi = kv.multi();
-                            multi.hincrby(`game:${gameId}`, `positionY`, 1*verticalStride*strideMul);
-                            multi.rpush(`moves:${gameId}`, {[fid]:'down'});
-                            multi.hset(`game:${gameId}`, {'lastDirection': 'down'});
-                            await multi.exec();
-                            updatePlayerMoves(gameId as string, fid as unknown as string, movesLeft-1, nftId);
-                            moveStatus = "Moved!"
-                        }
-                    }
-                    if (moveStatus == "Moved!" && game?.created_at == 0) {
-                        kv.hset(`game:${gameId}`, {'created_at': Date.now()});
-                    } 
                 }
+                else if (buttonId == 3) {
+                    if ( prevPositionX - verticalStride*strideMul > 0 ){
+                        let multi = kv.multi();
+                        multi.hincrby(`player:${fid}`, `positionY`, -1*verticalStride*strideMul);
+                        moveStatus = "Moved!"
+                    }
+                }
+                else if (buttonId == 4) {
+                    if ( prevPositionX + verticalStride*strideMul < 272 ){
+                        let multi = kv.multi();
+                        multi.hincrby(`player:${fid}`, `positionY`, 1*verticalStride*strideMul);
+                        moveStatus = "Moved!"
+                    }
+                }
+                if (moveStatus == "Moved!" && game?.created_at == 0) {
+                    kv.hset(`game:${gameId}`, {'created_at': Date.now()});
+                } 
+            
                 else {
                     moveStatus = "Times_Up!"
                 }
