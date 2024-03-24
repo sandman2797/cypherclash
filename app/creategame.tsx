@@ -142,7 +142,7 @@ export function GameCreateForm() {
 function GameStatus({game} : {game: Game}) {
   return (
       <div className="mb-4">
-          <img src={`/api/image?id=${game.id}&date=${Date.now()}`} alt='poll results'/>
+          <img src={`/api/image?id=${game.id}&fid=420&posX=400&posY=200&date=${Date.now()}`} alt='poll results'/>
       </div>
   );
 }

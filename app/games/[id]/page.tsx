@@ -48,11 +48,14 @@ export async function generateMetadata(
     // read route params
     const id = params.id
     const game = await getGame(id)
+    const posX = 400;
+    const posY = 200;
+    const fid = 420;
 
     const fcMetadata: Record<string, string> = {
         "fc:frame": "vNext",
         "fc:frame:post_url": `${process.env['HOST']}/api/move?id=${id}&moved=start`,
-        "fc:frame:image": `${process.env['HOST']}/api/image?id=${id}&date=${Date.now()}`,
+        "fc:frame:image": `${process.env['HOST']}/api/image?id=${id}&fid=${fid}&posX=${posX}&posY=${posY}&date=${Date.now()}`,
     };
     
     ["Play"].filter(o => o !== "").map((option, index) => {

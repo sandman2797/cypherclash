@@ -11,10 +11,11 @@ let fontData = fs.readFileSync(fontPath)
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        const gameId = req.query['id']
-        const fid = req.query['fid']
-        const posX = req.query['posX']
-        const posY = req.query['posY']
+        const gameId = req.query['id'];
+        const fid = req.query['fid'];
+        const posX = req.query['posX'];
+        const posY = req.query['posY'];
+        const date = req.query['date'];
         // const fid = parseInt(req.query['fid']?.toString() || '')
         if (!gameId) {
             return res.status(400).send('Missing poll ID');
@@ -86,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 {/* </div> */}
             </div>,
             {
-                width: 600, height: 314, fonts: [{
+                width: 768, height: 402, fonts: [{
                     data: fontData,
                     name: 'Roboto',
                     style: 'normal',
