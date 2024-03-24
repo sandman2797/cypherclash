@@ -6,7 +6,6 @@ type TableDataItem = {
     id: string; // Assuming the ID is a string
     move: string; // The move from MoveObject
     name: string; // The additional data to fetch
-    team: string;
 };
 type MoveObject = {
     [key: string]: string;
@@ -19,14 +18,10 @@ async function prepareTableData(gameId: string): Promise<TableDataItem[]> {
         const move = item[id];
         const playerData = await getPlayerData(gameId, id); // Fetch additional data
         let name = playerData?.name;
-        let team = playerData?.team;
         if (!name) {
             name = "No Name Found"
         } 
-        if (!team) {
-            team = "No team found"
-        } 
-        return { id, move, name, team }; // Structure for table row
+        return { id, move, name }; // Structure for table row
     });
 
     // Resolve all promises to get the complete table data
@@ -96,8 +91,6 @@ export async function TeamMembersTable({game}: { game: Game}) {
                                     <a href={`https://warpcast.com/~/profiles/${member.fid}`} target="_blank" rel="noopener noreferrer" className="warpcast-link">
                                         {member.name}
                                     </a></td>
-                                    <td className="border border-gray-400 px-4 py-2">{member.nft}</td>
-                                    <td className="border border-gray-400 px-4 py-2">{member.movesLeft}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -140,13 +133,13 @@ export async function MoveHistoryTable({game}:{game: Game}) {
                         </thead>
                         <tbody>
 
-                            {tableData.map(({ id, move, name, team }) => (
+                            {tableData.map(({ id, move, name}) => (
                                 <tr key={id}>
                                     <td className="border border-gray-400 px-4 py-2">
                                     <a href={`https://warpcast.com/~/profiles/${id}`} target="_blank" rel="noopener noreferrer" className="warpcast-link">
                                         {name}
                                     </a></td>
-                                    <td className="border border-gray-400 px-4 py-2">{team}</td>
+                                    <td className="border border-gray-400 px-4 py-2">Yes</td>
                                     <td className="border border-gray-400 px-4 py-2">{move}</td>
                                 </tr>
                             ))}
