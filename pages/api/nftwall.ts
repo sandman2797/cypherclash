@@ -9,7 +9,7 @@ import { init, fetchQuery } from "@airstack/node";
 
 interface NftList {
     name: string;
-    image: any; // 'any' type can be replaced with a more specific type depending on the use case
+    image: string; // 'any' type can be replaced with a more specific type depending on the use case
   }
 
 export async function fetchNFTData(fid:number) {
@@ -44,16 +44,18 @@ export async function fetchNFTData(fid:number) {
     const { data, error } = await fetchQuery(query);
     var nftList:NftList[] = [];
     for (const nftObj of data?.Wallet?.tokenBalances){
+        if (!nftObj.tokenNfts?.token){
+            continue;
+        }
         if (!nftObj.tokenNfts?.contentValue?.image?.original){
             continue;
         }
         let nft:NftList = {
             name: nftObj.tokenNfts?.token?.name,
-            image: nftObj.tokenNfts?.contentValue?.image?.original
+            image: nftObj.tokenNfts?.contentValue?.image?.original ? nftObj.tokenNfts?.contentValue?.image?.original : "asdf"
         }
         nftList.push(nft);
     }
-    console.log(nftList);
 
     return nftList;
 }
@@ -83,15 +85,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const buttonId = validatedMessage?.data?.frameActionBody?.buttonIndex || 0;
           const fid = validatedMessage?.data?.fid || 0;
           var displayIndex = 0;
-          if (buttonId == 1) {
+          if (buttonId == 1 && index > 0) {
             displayIndex = index-1;
           }
           else if (buttonId == 2) {
             displayIndex = index+1;
           }
           else if (buttonId == 3) {
-
-            console.log("first time I'm moving")
                     
             const imageUrl = `${process.env['HOST']}/api/image?fid=${fid}&date=${Date.now()}`;
 
@@ -117,10 +117,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 </html>
             `);
           }
-
-          const imageUrl = nftList[displayIndex].image;
-
-            // const imageUrl = `${process.env['HOST']}/api/image?id=${fid}&date=${Date.now()}`;
+          var imageUrl = "null";
+          console.log(displayIndex);
+          nftList.forEach((item, n) => {
+            if (n == displayIndex) {
+                imageUrl = item.image;
+            };
+          });
+          console.log(imageUrl);
 
             // Return an HTML response
             res.setHeader('Content-Type', 'text/html');
