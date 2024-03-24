@@ -32,4 +32,5 @@ export type PlayerData = {
   name: string;
   positionX: number;
   positionY: number;
+  lastDirection: string;
 };

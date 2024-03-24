@@ -96,6 +96,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             if ( prevPositionX - horizontalStride*strideMul > 0 ){
                                 let multi = kv.multi();
                                 multi.hincrby(`player:${fid}`, `positionX`, -1*horizontalStride*strideMul);
+                                multi.hset(`game:${gameId}`, {'lastDirection': 'left'});
                                 await multi.exec();
                                 moveStatus = "Moved!"
                             }
@@ -104,13 +105,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             if ( prevPositionX + horizontalStride*strideMul < 558 ){
                                 let multi = kv.multi();
                                 multi.hincrby(`player:${fid}`, `positionX`, 1*horizontalStride*strideMul);
+                                multi.hset(`game:${gameId}`, {'lastDirection': 'right'});
+                                await multi.exec();
                                 moveStatus = "Moved!"
                             }
                         }
                         else if (buttonId == 3) {
+                            console.log("inside UP");
                             if ( prevPositionY - verticalStride*strideMul > 0 ){
                                 let multi = kv.multi();
                                 multi.hincrby(`player:${fid}`, `positionY`, -1*verticalStride*strideMul);
+                                multi.hset(`game:${gameId}`, {'lastDirection': 'up'});
+                                await multi.exec();
                                 moveStatus = "Moved!"
                             }
                         }
@@ -118,6 +124,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             if ( prevPositionY + verticalStride*strideMul < 272 ){
                                 let multi = kv.multi();
                                 multi.hincrby(`player:${fid}`, `positionY`, 1*verticalStride*strideMul);
+                                multi.hset(`game:${gameId}`, {'lastDirection': 'down'});
+                                await multi.exec();
                                 moveStatus = "Moved!"
                             }
                         }

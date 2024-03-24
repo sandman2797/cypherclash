@@ -51,6 +51,7 @@ export async function addPlayer(fid: number, name: string) {
         name: name,
         positionX: posX,
         positionY: posY,
+        lastDirection: "down"
     };
   
     // Store player data in a hash
