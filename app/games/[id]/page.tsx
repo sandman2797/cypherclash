@@ -51,7 +51,7 @@ export async function generateMetadata(
 
     const fcMetadata: Record<string, string> = {
         "fc:frame": "vNext",
-        "fc:frame:post_url": `${process.env['HOST']}/api/move?id=${id}&moved=play`,
+        "fc:frame:post_url": `${process.env['HOST']}/api/move?id=${id}&moved=start`,
         "fc:frame:image": `${process.env['HOST']}/api/image?id=${id}&date=${Date.now()}`,
     };
     

@@ -7,7 +7,7 @@ const HUB_URL = process.env['HUB_URL'] || "nemes.farcaster.xyz:2283"
 const client = getSSLHubRpcClient(HUB_URL);
 import { init, fetchQuery } from "@airstack/node";
 
-async function fetchFData(fid:number) {
+export async function fetchFData(fid:number) {
 
     init(`${process.env['YOUR_AIRSTACK_API_KEY']}`);
 
@@ -39,7 +39,7 @@ async function fetchFData(fid:number) {
     return r;
     }
 
-async function addPlayer(fid: number, name: string) {
+export async function addPlayer(fid: number, name: string) {
     const playerKey = `player:${fid}`;
   
     // Player data
@@ -60,7 +60,7 @@ async function addPlayer(fid: number, name: string) {
   }
   
 export async function getPlayerData(gameId: string, fid: string): Promise<PlayerData | null> {
-    const playerKey = `player:${gameId}:${fid}`;
+    const playerKey = `player:${fid}`;
     return await kv.hgetall(playerKey);
 }
 
