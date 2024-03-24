@@ -161,6 +161,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         }
                         if (moveStatus == "NFT Wall") {
                             upButton = "O";
+                            kv.hset(`player:${fid}`, {'lastDirection': 'up'});
                         }
                         if (moveStatus == "Moved!" && game?.created_at == 0) {
                             kv.hset(`game:${gameId}`, {'created_at': Date.now()});
@@ -188,7 +189,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 <meta property="og:image" content="${imageUrl}">
                 <meta name="fc:frame" content="vNext">
                 <meta name="fc:frame:image" content="${imageUrl}">
-                <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${gameId}&moved=play&nftwall=${upButton}}">
+                <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/move?id=${gameId}&moved=play&nftwall=${upButton}">
                 <meta name="fc:frame:button:1" content="Left">
                 <meta name="fc:frame:button:2" content="Right">
                 <meta name="fc:frame:button:3" content=${upButton}>
