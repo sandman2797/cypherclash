@@ -13,29 +13,18 @@ let fontData = fs.readFileSync(fontPath)
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        const gameId = req.query['id'];
         const fid = req.query['fid'];
         // const fid = parseInt(req.query['fid']?.toString() || '')
-        if (!gameId) {
-            return res.status(400).send('Missing poll ID');
-        }
 
-        let game: Game | null = await kv.hgetall(`game:${gameId}`);
+
         var playerData:PlayerData | null = await getPlayerData(fid as unknown as string);
         if (!playerData) {
             const nfid = 42690;
             playerData = await getPlayerData(nfid as unknown as string);
         }
 
-        if (!game) {
-            return res.status(400).send('Missing poll ID');
-        }
 
         const showResults = req.query['results'] === 'true'
-        // let votedOption: number | null = null
-        // if (showResults && fid > 0) {
-        //     votedOption = await kv.hget(`poll:${pollId}:votes`, `${fid}`) as number
-        // }
 
 
         const characterX = playerData?.positionX; // 0 - 540
