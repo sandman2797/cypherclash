@@ -62,9 +62,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 playerData = await getPlayerData(gameId as string, fid as unknown as string);
             }
             const prevPositionXValue = playerData?.positionX;
-            const prevPositionX = Number(prevPositionXValue);
+            var prevPositionX = Number(prevPositionXValue);
             const prevPositionYValue = playerData?.positionY;
-            const prevPositionY = Number(prevPositionYValue);
+            var prevPositionY = Number(prevPositionYValue);
 
             let moveStatus = "Can't_move";
             if (moved){
@@ -98,7 +98,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 multi.hincrby(`player:${fid}`, `positionX`, -1*horizontalStride*strideMul);
                                 multi.hset(`game:${gameId}`, {'lastDirection': 'left'});
                                 await multi.exec();
-                                moveStatus = "Moved!"
+                                prevPositionX += -1*horizontalStride*strideMul
                             }
                         }
                         else if (buttonId == 2) {
@@ -107,7 +107,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 multi.hincrby(`player:${fid}`, `positionX`, 1*horizontalStride*strideMul);
                                 multi.hset(`game:${gameId}`, {'lastDirection': 'right'});
                                 await multi.exec();
-                                moveStatus = "Moved!"
+                                prevPositionX += 1*horizontalStride*strideMul
                             }
                         }
                         else if (buttonId == 3) {
@@ -117,7 +117,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 multi.hincrby(`player:${fid}`, `positionY`, -1*verticalStride*strideMul);
                                 multi.hset(`game:${gameId}`, {'lastDirection': 'up'});
                                 await multi.exec();
-                                moveStatus = "Moved!"
+                                prevPositionX += -1*verticalStride*strideMul
                             }
                         }
                         else if (buttonId == 4) {
@@ -126,7 +126,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 multi.hincrby(`player:${fid}`, `positionY`, 1*verticalStride*strideMul);
                                 multi.hset(`game:${gameId}`, {'lastDirection': 'down'});
                                 await multi.exec();
-                                moveStatus = "Moved!"
+                                prevPositionX += 1*verticalStride*strideMul
                             }
                         }
                         if (moveStatus == "Moved!" && game?.created_at == 0) {

@@ -43,15 +43,15 @@ export async function addPlayer(fid: number, name: string) {
     const playerKey = `player:${fid}`;
   
     // Player data
-    const posX = 280;
-    const posY = 118;
+    const posX = 460;
+    const posY = 230;
 
     const playerData: PlayerData = {
         fid: fid,
         name: name,
         positionX: posX,
         positionY: posY,
-        lastDirection: "down"
+        lastDirection: "left"
     };
   
     // Store player data in a hash
