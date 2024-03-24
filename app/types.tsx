@@ -30,9 +30,6 @@ export type Game = {
 export type PlayerData = {
   fid: number;
   name: string;
-  team: string;
-  nft: number;
-  movesLeft: number;
   positionX: number;
   positionY: number;
 };
