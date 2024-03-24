@@ -3,7 +3,7 @@ import path from 'path';
 
 export default async function handler(req, res) {
     // Adjust the path according to your image location
-    const imagePath = path.resolve('./public/images', 'framegame3.png');
+    const imagePath = path.resolve('./public/images', 'frame_new_house.png');
 
     try {
         const imageBuffer = fs.readFileSync(imagePath);
